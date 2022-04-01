@@ -7,8 +7,8 @@ using System.Linq;
 public class Player : MonoBehaviour
 {    
     [SerializeField] private float _transferSpeed;
-    [SerializeField] private List<ResourceCluster> _clusters;
-    [SerializeField] private PlayerController _controller;
+    [SerializeField] private List<ResourceCluster> _clusters;    
+
     private event Action _transferringStopped;
     private ResourceProducer _producer;
     private ResourceConsumer _consumer;
@@ -41,7 +41,7 @@ public class Player : MonoBehaviour
     {
         if (_consumer != null)
         {
-            Destroy(ref _uploadJob);
+            Stop(ref _uploadJob);
             UploadResourcesTo(_consumer);
         }
     }
@@ -57,7 +57,7 @@ public class Player : MonoBehaviour
             
             VisitStarted?.Invoke();
 
-            Destroy(ref _uploadJob);
+            Stop(ref _uploadJob);
 
             DownloadResourcesFrom(_producer);
         }
@@ -68,7 +68,7 @@ public class Player : MonoBehaviour
 
             VisitStarted?.Invoke();
 
-            Destroy(ref _downloadJob);
+            Stop(ref _downloadJob);
 
             UploadResourcesTo(_consumer);         
         }
@@ -84,8 +84,8 @@ public class Player : MonoBehaviour
         
         VisitEnded?.Invoke();
 
-        Destroy(ref _downloadJob);
-        Destroy(ref _uploadJob);
+        Stop(ref _downloadJob);
+        Stop(ref _uploadJob);
     }
 
     private void UploadResourcesTo(ResourceConsumer consumer)
@@ -98,15 +98,13 @@ public class Player : MonoBehaviour
 
             var fromPlayerCluster = _clusters.FirstOrDefault(c => c.Resource == toConsumerCluster.Resource);
 
-            bool baseCondition = fromPlayerCluster != null && _uploadJob == null && fromPlayerCluster.CurrentResources > 0 && 
+            bool isCorrect = fromPlayerCluster != null && _uploadJob == null && fromPlayerCluster.CurrentResources > 0 && 
                 toConsumerCluster.CurrentResources < toConsumerCluster.MaxResources;
 
-            if (baseCondition)
+            if (isCorrect)
             {
                 _uploadJob = StartCoroutine(TransferResources(toConsumerCluster, fromPlayerCluster, _transferSpeed));
-                InteractionCluster = toConsumerCluster;
-
-                
+                InteractionCluster = toConsumerCluster;                
             }
         }
     }
@@ -116,10 +114,10 @@ public class Player : MonoBehaviour
         var toPlayerCluster = _clusters.FirstOrDefault(c => c.Resource == producer.Cluster.Resource);
         var fromProducerCluster = producer.Cluster;
 
-        bool baseCondition = _downloadJob == null && fromProducerCluster.CurrentResources > 0 &&
+        bool isCorrect = _downloadJob == null && fromProducerCluster.CurrentResources > 0 &&
                 toPlayerCluster.CurrentResources < toPlayerCluster.MaxResources;
 
-        if (baseCondition)
+        if (isCorrect)
         {
             _downloadJob = StartCoroutine(TransferResources(toPlayerCluster, fromProducerCluster, _transferSpeed));
             InteractionCluster = fromProducerCluster;
@@ -149,7 +147,7 @@ public class Player : MonoBehaviour
             _transferringStopped?.Invoke();
     }
 
-    private void Destroy(ref Coroutine coroutine)
+    private void Stop(ref Coroutine coroutine)
     {
         if (coroutine != null)
         {

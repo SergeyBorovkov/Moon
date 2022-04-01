@@ -6,6 +6,7 @@ public class ResourceCluster : MonoBehaviour
     [SerializeField] private Resource _resource;
     [SerializeField] private int _currentResources;
     [SerializeField] private int _maxResources;
+
     private string _message;
     private int _totalMax = 100; 
 

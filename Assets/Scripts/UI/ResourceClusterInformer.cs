@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
@@ -21,21 +19,20 @@ public class ResourceClusterInformer : MonoBehaviour
         _cluster.MessageChanged += OnMessageChanged;
     }
 
-
     private void OnDisable()
     {
         _cluster.CurrentResourceChanged -= OnCurrentResourceChanged;
         _cluster.MessageChanged -= OnMessageChanged;
     }
 
-    private void OnMessageChanged()
-    {
-        ShowMessage();
-    }
-
     private void OnCurrentResourceChanged()
     {
         ShowResourceValues();        
+    }
+
+    private void OnMessageChanged()
+    {
+        ShowMessage();
     }
 
     private void ShowResourceValues()

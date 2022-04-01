@@ -1,6 +1,5 @@
 using System;
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class ResourceProducer : MonoBehaviour
@@ -8,7 +7,8 @@ public class ResourceProducer : MonoBehaviour
     [SerializeField] private Player _player;
     [SerializeField] private ResourceConsumer _consumer;
     [SerializeField] private ResourceCluster _cluster;
-    [SerializeField] private float _productionSpeed;    
+    [SerializeField] private float _productionSpeed;
+    
     private Coroutine _produceJob;    
     public ResourceCluster Cluster => _cluster;
 
@@ -50,12 +50,12 @@ public class ResourceProducer : MonoBehaviour
     private void OnPlayerVisitStarted()
     {
         if (this == _player.Producer || _consumer == _player.Consumer)
-            Destroy(ref _produceJob);
+            Stop(ref _produceJob);
     }
 
     private void OnCurrentResourceChanged()
     {
-        Destroy(ref _produceJob);
+        Stop(ref _produceJob);
         ProduceResources();        
     }
 
@@ -68,14 +68,14 @@ public class ResourceProducer : MonoBehaviour
             if (baseCondition && _produceJob == null)            
                 _produceJob = StartCoroutine(ProduceResources(_productionSpeed));            
             else if (!baseCondition)            
-                Destroy(ref _produceJob);            
+                Stop(ref _produceJob);            
         }
         else if (_consumer != null)
         {
             if (baseCondition && _consumer.IsEnoughForProduction && _produceJob == null && _consumer != _player.Consumer)            
                 _produceJob = StartCoroutine(ProduceResources(_productionSpeed));            
             else if (_produceJob != null && (!baseCondition || !_consumer.IsEnoughForProduction || _consumer == _player.Consumer))            
-                Destroy(ref _produceJob);                        
+                Stop(ref _produceJob);                        
         }
 
         ReportMessages();
@@ -107,7 +107,7 @@ public class ResourceProducer : MonoBehaviour
         }
     }
 
-    private void Destroy(ref Coroutine coroutine)
+    private void Stop(ref Coroutine coroutine)
     {
         if (coroutine != null)
         {

@@ -15,11 +15,6 @@ public class PlayerVisualizer : ResourceVisualizer
             VisualizationBox.gameObject.SetActive(false);
             ActivateBoxes(Cluster.CurrentResources);
         }
-
-        if (_player.InteractionCluster != null && _player.InteractionCluster.TryGetComponent(out ResourceVisualizer visualizer))
-        {
-            //_interactionClusterBoxPosition = visualizer.CurrentBoxPosition;
-        }
     }
 
     protected override void OnCurrentResourceChanged()
@@ -95,11 +90,6 @@ public class PlayerVisualizer : ResourceVisualizer
         }
 
         VisualizationBox.gameObject.SetActive(false);
-        ActivateBoxes(Cluster.CurrentResources);
-
-        if (_player.InteractionCluster != null && _player.InteractionCluster.TryGetComponent(out ResourceVisualizer visualizer))
-        {
-            
-        }
+        ActivateBoxes(Cluster.CurrentResources);        
     }    
 }

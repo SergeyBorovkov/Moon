@@ -1,15 +1,18 @@
-using System;
 using UnityEngine;
 
-public class PlayerController : MonoBehaviour
+[RequireComponent(typeof(Rigidbody))]
+public class PlayerMover : MonoBehaviour
 {
-    [SerializeField] private Rigidbody _rb;
     [SerializeField] private float _speed = 5f;
     [SerializeField] private float _turnSpeed = 360;
 
+    private Rigidbody _rigidBody;
     private Vector3 _input;
 
-    public bool IsMoving = false;
+    private void Awake()
+    {
+        _rigidBody = GetComponent<Rigidbody>();
+    }
 
     private void Update()
     {
@@ -34,16 +37,10 @@ public class PlayerController : MonoBehaviour
             var direction = (transform.position + _input) - transform.position;
             var rotation = Quaternion.LookRotation(direction);
             transform.rotation = Quaternion.RotateTowards(transform.rotation, rotation, _turnSpeed * Time.deltaTime);
-
-            IsMoving = true;            
-        }
-        else
-        {
-            IsMoving = false;            
-        }
+        }        
     }
     private void Move()
     {
-        _rb.MovePosition(transform.position + transform.forward *_input.magnitude * _speed * Time.deltaTime);
+        _rigidBody.MovePosition(transform.position + transform.forward *_input.magnitude * _speed * Time.deltaTime);
     }
 }
